@@ -19,6 +19,7 @@ android {
 }
 
 dependencies {
+    implementation project(':pipe')
     implementation 'com.android.support:appcompat-v7:26.1.0'
 
     testImplementation 'junit:junit:4.12'
