@@ -2,6 +2,8 @@ package com.example.images.ui;
 
 import android.support.annotation.NonNull;
 
+import com.example.images.data.ImagesRepository;
+import com.example.images.data.Result;
 import com.example.images.domain.ImageSearchInteractor;
 import com.example.pipe.Pipe;
 import com.example.pipe.Pipes;
@@ -22,7 +24,8 @@ public class ImageSearchPresenter implements Listener {
     private final ImageSearchInteractor interactor;
     private final AtomicReference<String> currentQuery = new AtomicReference<>("");
 
-    private Pipe<State>.Subscription subscription;
+    private Pipe<State>.Subscription dataSubscription;
+    private Pipe<Boolean>.Subscription loadingSubscription;
 
     public ImageSearchPresenter(ImageSearchInteractor interactor) {
         this.interactor = interactor;
@@ -34,57 +37,68 @@ public class ImageSearchPresenter implements Listener {
     public void start(ImageSearchView view) {
         view.setListener(this);
 
-        interactor.loadingResults()
+        loadingSubscription = interactor.loadingResults()
                 .subscribe(loading -> {
                     if (loading) {
                         view.updateState(State.Loading.INSTANCE);
                     }
                 });
 
-        subscription = Pipes
+        dataSubscription = Pipes
                 .combine(
                         interactor.searchResults(),
                         interactor.loadingNextPage(),
                         interactor.morePagesAvailable(),
-                        (result, loadingNextPage, morePagesAvailable) -> {
-                            if (result.isSuccess()) {
-
-                                String query = currentQuery.get();
-
-                                if (query.isEmpty()) {
-                                    return State.Default.INSTANCE;
-                                } else {
-                                    if (result.value.isEmpty()) {
-                                        return State.NoResults.INSTANCE;
-                                    } else {
-                                        List<Item> items = map(
-                                                result.value,
-                                                it -> new Item.Image(it.url)
-                                        );
-
-                                        if (loadingNextPage) {
-                                            items.add(Item.Loading.INSTANCE);
-                                        }
-
-                                        return new State.LoadedResults(
-                                                items,
-                                                morePagesAvailable
-                                        );
-                                    }
-                                }
-                            } else {
-                                return State.Failure.INSTANCE;
-                            }
-                        }
+                        this::buildState
                 )
                 .subscribe(view::updateState);
+    }
+
+    private State buildState(Result<List<ImagesRepository.Image>> result, Boolean loadingNextPage, Boolean morePagesAvailable) {
+        if (result.isSuccess()) {
+            return buildSuccessState(result, loadingNextPage, morePagesAvailable);
+        } else {
+            return State.Failure.INSTANCE;
+        }
+    }
+
+    private State buildSuccessState(Result<List<ImagesRepository.Image>> result, Boolean loadingNextPage, Boolean morePagesAvailable) {
+        String query = currentQuery.get();
+
+        if (query.isEmpty()) {
+            return State.Default.INSTANCE;
+        } else {
+            if (result.value.isEmpty()) {
+                return State.NoResults.INSTANCE;
+            } else {
+                return buildLoadedState(result, loadingNextPage, morePagesAvailable);
+            }
+        }
+    }
+
+    @NonNull
+    private State buildLoadedState(Result<List<ImagesRepository.Image>> result, Boolean loadingNextPage, Boolean morePagesAvailable) {
+        List<Item> items = map(
+                result.value,
+                it -> new Item.Image(it.url)
+        );
+
+        if (loadingNextPage) {
+            items.add(Item.Loading.INSTANCE);
+        }
+
+        return new State.LoadedResults(
+                items,
+                morePagesAvailable
+        );
     }
 
     /**
      * Stops presenting the data. Clears the reference to the view.
      */
     public void stop() {
-        subscription.unsubscribe();
+        dataSubscription.unsubscribe();
+        loadingSubscription.unsubscribe();
     }
 
     @Override
