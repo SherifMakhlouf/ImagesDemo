@@ -1,8 +1,10 @@
-package com.example.images.features.search.data;
+package com.example.images.features.search.data.repository;
 
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
+import com.example.images.features.search.data.Paginated;
+import com.example.images.features.search.data.Result;
 import com.example.pipe.Pipe;
 
 import java.util.List;

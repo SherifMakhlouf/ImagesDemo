@@ -1,6 +1,6 @@
 package com.example.images.features.search.ui;
 
-import com.example.images.features.search.data.ImagesRepository;
+import com.example.images.features.search.data.repository.ImagesRepository;
 import com.example.images.features.search.data.Result;
 import com.example.images.features.search.domain.ImageSearchInteractor;
 import com.example.pipe.Pipe;

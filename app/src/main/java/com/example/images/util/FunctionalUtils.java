@@ -8,6 +8,9 @@ import java.util.List;
  */
 public class FunctionalUtils {
 
+    private FunctionalUtils() {
+    }
+
     /**
      * @return new list with a mapper function applied to every element.
      */

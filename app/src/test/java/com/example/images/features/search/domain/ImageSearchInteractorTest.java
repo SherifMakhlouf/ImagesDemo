@@ -1,7 +1,7 @@
 package com.example.images.features.search.domain;
 
 
-import com.example.images.features.search.data.ImagesRepository;
+import com.example.images.features.search.data.repository.ImagesRepository;
 import com.example.images.features.search.data.Paginated;
 import com.example.images.features.search.data.Result;
 import com.example.pipe.Pipe;
@@ -17,7 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static com.example.images.features.search.data.ImagesRepository.Image;
+import static com.example.images.features.search.data.repository.ImagesRepository.Image;
 import static com.example.images.features.search.data.Result.error;
 import static com.example.images.features.search.data.Result.success;
 import static com.example.pipe.Tester.test;
