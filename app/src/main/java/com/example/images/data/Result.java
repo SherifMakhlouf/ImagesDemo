@@ -1,46 +1,42 @@
 package com.example.images.data;
 
-import android.support.annotation.Nullable;
-
 /**
  * Result which can either be successful or faulty.
  */
 public final class Result<T> {
 
     /**
-     * Value of a successful result. {@code null} if result is faulty.
+     * Value of a successful value. {@code null} if value is faulty.
      */
-    @Nullable
     public final T value;
 
     /**
-     * Error of a faulty result. {@code null} if result is successful.
+     * Error of a faulty value. {@code null} if value is successful.
      */
-    @Nullable
     public final Throwable throwable;
 
     /**
-     * @return new successful result.
+     * @return new successful value.
      */
     public static <T> Result<T> success(T value) {
         return new Result<>(value, null);
     }
 
     /**
-     * @return new faulty result.
+     * @return new faulty value.
      */
     public static <T> Result<T> error(Throwable throwable) {
         return new Result<>(null, throwable);
     }
 
-    private Result(@Nullable T value,
-                   @Nullable Throwable throwable) {
+    private Result(T value,
+                   Throwable throwable) {
         this.value = value;
         this.throwable = throwable;
     }
 
     /**
-     * @return {@code true} if result is successful. {@code false} if it is unsuccessful.
+     * @return {@code true} if value is successful. {@code false} if it is unsuccessful.
      */
     public boolean isSuccess() {
         return throwable == null;

@@ -7,12 +7,12 @@ public class Paginated<T> {
 
     public final int currentPage;
     public final int totalPages;
-    public final T result;
+    public final T value;
 
-    public Paginated(int currentPage, int totalPages, T result) {
+    public Paginated(int currentPage, int totalPages, T value) {
         this.currentPage = currentPage;
         this.totalPages = totalPages;
-        this.result = result;
+        this.value = value;
     }
 
     @Override
@@ -20,7 +20,7 @@ public class Paginated<T> {
         return "Paginated{" +
                 "currentPage=" + currentPage +
                 ", totalPages=" + totalPages +
-                ", result=" + result +
+                ", value=" + value +
                 '}';
     }
 
@@ -33,14 +33,14 @@ public class Paginated<T> {
 
         return currentPage == that.currentPage
                 && totalPages == that.totalPages
-                && (result != null ? result.equals(that.result) : that.result == null);
+                && (value != null ? value.equals(that.value) : that.value == null);
     }
 
     @Override
     public int hashCode() {
         int result1 = currentPage;
         result1 = 31 * result1 + totalPages;
-        result1 = 31 * result1 + (result != null ? result.hashCode() : 0);
+        result1 = 31 * result1 + (value != null ? value.hashCode() : 0);
         return result1;
     }
 

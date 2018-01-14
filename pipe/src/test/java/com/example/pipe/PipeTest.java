@@ -20,12 +20,7 @@ public class PipeTest {
         final AtomicReference<String> receivedValue = new AtomicReference<>();
 
         // When
-        pipe.subscribe(new Action1<String>() {
-            @Override
-            public void call(String value) {
-                receivedValue.set(value);
-            }
-        });
+        pipe.subscribe(receivedValue::set);
 
         source.push("value");
 
@@ -45,12 +40,7 @@ public class PipeTest {
 
         // When
         pipe
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String value) {
-                        receivedValue.set(value);
-                    }
-                })
+                .subscribe(receivedValue::set)
                 .unsubscribe();
 
         source.push("value");
@@ -60,4 +50,25 @@ public class PipeTest {
                 receivedValue.get()
         );
     }
+
+    @Test
+    public void newSubscribersShouldReceiveTheLatestValue() throws Exception {
+        // Given
+        Pipe<String> pipe = Pipe.fromSource(source);
+
+        final AtomicReference<String> receivedValue = new AtomicReference<>();
+
+        // When
+        source.push("value");
+
+        pipe.subscribe(receivedValue::set);
+
+
+        // Then
+        assertEquals(
+                "value",
+                receivedValue.get()
+        );
+    }
+
 }

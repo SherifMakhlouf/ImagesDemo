@@ -3,14 +3,24 @@ package com.example.pipe;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Reactive stream of values which are being pushed on the one end and can be observed on another
  * end.
+ * <p>
+ * For people familiar with RxJava, there are some key differences:
+ * <p>
+ * - There is no concept of pipe completion.
+ * - Subscribing to the pipe does not invoke any actions on the producer side.
+ * - Errors are never emitted.
+ * - New subscribers automatically receive latest value, if there is one.
+ * - Just like in RxJava2, null values are not permitted.
  */
 public class Pipe<T> {
 
     private final Set<Action1<T>> consumers = new LinkedHashSet<>();
+    private final AtomicReference<T> latestValue = new AtomicReference<>();
 
     private Pipe() {
     }
@@ -21,13 +31,12 @@ public class Pipe<T> {
     public static <T> Pipe<T> fromSource(Source<T> source) {
         final Pipe<T> pipe = new Pipe<>();
 
-        source.registerConsumer(new Action1<T>() {
-            @Override
-            public void call(T value) {
-                synchronized (pipe.consumers) {
-                    for (Action1<T> consumer : pipe.consumers) {
-                        consumer.call(value);
-                    }
+        source.registerConsumer(value -> {
+            synchronized (pipe.consumers) {
+                pipe.latestValue.set(value);
+
+                for (Action1<T> consumer : pipe.consumers) {
+                    consumer.call(value);
                 }
             }
         });
@@ -36,23 +45,33 @@ public class Pipe<T> {
     }
 
     /**
+     * @return new pipe which never emits any values.
+     */
+    public static <T> Pipe<T> empty() {
+        return fromSource(new Source<>());
+    }
+
+    /**
      * Subscribes to the pipe.
-     * <p>
-     * For people familiar with RxJava, there are some key differences:
-     * <p>
-     * - There is no concept of pipe completion.
-     * - Subscribing to the pipe does not invoke any actions on the producer side.
-     * - Errors are never emitted.
      *
      * @param onNext callback which is notified each time new item is being pushed out of the pipe.
      * @return {@link Subscription} object which represents connection to the pipe.
      */
     public Subscription subscribe(Action1<T> onNext) {
+        propagateLatestValue(onNext);
+
         synchronized (consumers) {
             consumers.add(onNext);
         }
 
         return new Subscription(onNext);
+    }
+
+    private void propagateLatestValue(Action1<T> onNext) {
+        T latest = latestValue.get();
+        if (latest != null) {
+            onNext.call(latest);
+        }
     }
 
     /**

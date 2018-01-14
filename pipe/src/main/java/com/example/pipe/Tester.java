@@ -14,7 +14,7 @@ public class Tester<T> {
     /**
      * @return new tester which observes the given pipe.
      */
-    public static <T> Tester<T> fromPipe(Pipe<T> pipe) {
+    public static <T> Tester<T> test(Pipe<T> pipe) {
         final Tester<T> tester = new Tester<>();
 
         pipe.subscribe(tester::onNext);

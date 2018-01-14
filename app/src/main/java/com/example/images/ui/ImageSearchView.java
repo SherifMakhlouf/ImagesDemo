@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 /**
- * Allows user to search for the images and shows the result.
+ * Allows user to search for the images and shows the value.
  */
 public interface ImageSearchView {
 

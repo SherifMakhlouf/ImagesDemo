@@ -17,7 +17,7 @@ public interface ImagesRepository {
      *
      * @param query      search query.
      * @param pageNumber number of the page to load.
-     * @return {@link Pipe} which would emit the result as soon as it is available.
+     * @return {@link Pipe} which would emit the value as soon as it is available.
      */
     Pipe<Result<Paginated<List<Image>>>> queryImages(
             @NonNull String query,

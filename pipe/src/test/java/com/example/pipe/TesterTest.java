@@ -11,7 +11,7 @@ public class TesterTest {
     @Test(expected = AssertionError.class)
     public void assertValues_Fail_NoValues() throws Exception {
         // Given
-        Tester<String> tester = Tester.fromPipe(pipe);
+        Tester<String> tester = Tester.test(pipe);
 
         // When
         tester.assertValues("A");
@@ -23,7 +23,7 @@ public class TesterTest {
     @Test(expected = AssertionError.class)
     public void assertValues_Fail_DifferentValue() throws Exception {
         // Given
-        Tester<String> tester = Tester.fromPipe(pipe);
+        Tester<String> tester = Tester.test(pipe);
         source.push("B");
 
         // When
@@ -36,7 +36,7 @@ public class TesterTest {
     @Test(expected = AssertionError.class)
     public void assertValues_Fail_DifferentCount() throws Exception {
         // Given
-        Tester<String> tester = Tester.fromPipe(pipe);
+        Tester<String> tester = Tester.test(pipe);
         source.push("A");
         source.push("B");
         source.push("C");
@@ -51,7 +51,7 @@ public class TesterTest {
     @Test
     public void assertValues_Success() throws Exception {
         // Given
-        Tester<String> tester = Tester.fromPipe(pipe);
+        Tester<String> tester = Tester.test(pipe);
         source.push("A");
         source.push("B");
 
