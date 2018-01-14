@@ -70,12 +70,40 @@ public interface ImageSearchView {
                 this.url = url;
             }
 
+            @Override
+            public String toString() {
+                return "Image{" +
+                        "url='" + url + '\'' +
+                        '}';
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+
+                Image image = (Image) o;
+
+                return url.equals(image.url);
+            }
+
+            @Override
+            public int hashCode() {
+                return url.hashCode();
+            }
+
         }
 
         /**
          * Indicates that more results are being loaded at the moment.
          */
         public static final class Loading extends Item {
+
+            public static final Loading INSTANCE = new Loading();
+
+            private Loading() {
+            }
+
         }
 
     }
@@ -91,18 +119,36 @@ public interface ImageSearchView {
          * User did not attempt to search for anything.
          */
         public static final class Default extends State {
+
+            public static final Default INSTANCE = new Default();
+
+            private Default() {
+            }
+
         }
 
         /**
          * Something is being loaded.
          */
         public static final class Loading extends State {
+
+            public static final Loading INSTANCE = new Loading();
+
+            private Loading() {
+            }
+
         }
 
         /**
          * User tried to search for something but nothing was found.
          */
         public static final class NoResults extends State {
+
+            public static final NoResults INSTANCE = new NoResults();
+
+            private NoResults() {
+            }
+
         }
 
         /**
@@ -115,6 +161,28 @@ public interface ImageSearchView {
 
             public LoadedResults(@NonNull List<Item> items) {
                 this.items = items;
+            }
+
+            @Override
+            public String toString() {
+                return "LoadedResults{" +
+                        "items=" + items +
+                        '}';
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+
+                LoadedResults that = (LoadedResults) o;
+
+                return items.equals(that.items);
+            }
+
+            @Override
+            public int hashCode() {
+                return items.hashCode();
             }
 
         }
