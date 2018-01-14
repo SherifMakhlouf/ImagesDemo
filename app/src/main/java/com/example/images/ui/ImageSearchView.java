@@ -104,6 +104,11 @@ public interface ImageSearchView {
             private Loading() {
             }
 
+            @Override
+            public String toString() {
+                return "Loading";
+            }
+
         }
 
     }
@@ -125,6 +130,10 @@ public interface ImageSearchView {
             private Default() {
             }
 
+            @Override
+            public String toString() {
+                return "Default";
+            }
         }
 
         /**
@@ -137,6 +146,10 @@ public interface ImageSearchView {
             private Loading() {
             }
 
+            @Override
+            public String toString() {
+                return "Loading";
+            }
         }
 
         /**
@@ -149,6 +162,27 @@ public interface ImageSearchView {
             private NoResults() {
             }
 
+            @Override
+            public String toString() {
+                return "NoResults";
+            }
+        }
+
+        /**
+         * Something went wrong and results can't be loaded.
+         */
+        public static final class Failure extends State {
+
+            public static final Failure INSTANCE = new Failure();
+
+            private Failure() {
+            }
+
+            @Override
+            public String toString() {
+                return "Failure";
+            }
+
         }
 
         /**
@@ -158,15 +192,18 @@ public interface ImageSearchView {
 
             @NonNull
             public final List<Item> items;
+            public final boolean morePagesAvailable;
 
-            public LoadedResults(@NonNull List<Item> items) {
+            public LoadedResults(@NonNull List<Item> items, boolean morePagesAvailable) {
                 this.items = items;
+                this.morePagesAvailable = morePagesAvailable;
             }
 
             @Override
             public String toString() {
                 return "LoadedResults{" +
                         "items=" + items +
+                        ", morePagesAvailable=" + morePagesAvailable +
                         '}';
             }
 
@@ -177,12 +214,15 @@ public interface ImageSearchView {
 
                 LoadedResults that = (LoadedResults) o;
 
-                return items.equals(that.items);
+                return morePagesAvailable == that.morePagesAvailable
+                        && items.equals(that.items);
             }
 
             @Override
             public int hashCode() {
-                return items.hashCode();
+                int result = items.hashCode();
+                result = 31 * result + (morePagesAvailable ? 1 : 0);
+                return result;
             }
 
         }

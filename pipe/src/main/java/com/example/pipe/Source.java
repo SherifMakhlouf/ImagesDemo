@@ -10,7 +10,7 @@ import java.util.Set;
 public class Source<T> {
 
     private final Set<Action1<T>> consumers = new LinkedHashSet<>();
-    private final T defaultValue;
+    private T defaultValue;
 
     public Source() {
         this(null);
@@ -27,6 +27,8 @@ public class Source<T> {
         if (value == null) {
             throw new NullPointerException("Null values are not permitted");
         }
+
+        defaultValue = value;
 
         synchronized (consumers) {
             for (Action1<T> consumer : consumers) {

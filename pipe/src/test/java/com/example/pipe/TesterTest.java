@@ -62,4 +62,28 @@ public class TesterTest {
         // Success
     }
 
+    @Test
+    public void assertEmpty_Empty() throws Exception {
+        // Given
+        Tester<String> tester = Tester.test(pipe);
+
+        // When
+        tester.assertEmpty();
+
+        // Then
+        // Success
+    }
+
+    @Test(expected = AssertionError.class)
+    public void assertEmpty_NotEmpty() throws Exception {
+        // Given
+        Tester<String> tester = Tester.test(pipe);
+        source.push("A");
+
+        // When
+        tester.assertEmpty();
+
+        // Then
+        // Expect exception
+    }
 }

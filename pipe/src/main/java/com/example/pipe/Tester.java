@@ -44,6 +44,15 @@ public class Tester<T> {
         }
     }
 
+    /**
+     * Asserts that no values were emitted.
+     */
+    public final void assertEmpty() {
+        if (!values.isEmpty()) {
+            throw new AssertionError("Expected no values.\nReceived: " + values);
+        }
+    }
+
     private void onNext(T value) {
         values.add(value);
     }

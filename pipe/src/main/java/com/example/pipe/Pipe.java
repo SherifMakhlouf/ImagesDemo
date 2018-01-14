@@ -45,6 +45,13 @@ public class Pipe<T> {
     }
 
     /**
+     * @return new pipe which has only one value in it.
+     */
+    public static <T> Pipe<T> constant(T value) {
+        return fromSource(new Source<>(value));
+    }
+
+    /**
      * @return new pipe which never emits any values.
      */
     public static <T> Pipe<T> empty() {
