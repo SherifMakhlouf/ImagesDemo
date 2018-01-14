@@ -2,6 +2,7 @@ package com.example.images.domain;
 
 import android.support.annotation.NonNull;
 
+import com.example.images.data.ImagesRepository;
 import com.example.pipe.Pipe;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class ImageSearchInteractor {
      * @return pipe which emits search results for current query. When new page is requested, pipe
      * emits a list with new values being appended at the end.
      */
-    public Pipe<List<?>> searchResults() {
+    public Pipe<List<ImagesRepository.Image>> searchResults() {
         throw new UnsupportedOperationException();
     }
 

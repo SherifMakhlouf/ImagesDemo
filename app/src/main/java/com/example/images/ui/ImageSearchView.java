@@ -61,7 +61,7 @@ public interface ImageSearchView {
         /**
          * Image which is stored on the remote server.
          */
-        public static class Image extends Item {
+        public static final class Image extends Item {
 
             @NonNull
             public final String url;
@@ -75,7 +75,7 @@ public interface ImageSearchView {
         /**
          * Indicates that more results are being loaded at the moment.
          */
-        public static class Loading extends Item {
+        public static final class Loading extends Item {
         }
 
     }
@@ -90,25 +90,25 @@ public interface ImageSearchView {
         /**
          * User did not attempt to search for anything.
          */
-        public static class Default extends State {
+        public static final class Default extends State {
         }
 
         /**
          * Something is being loaded.
          */
-        public static class Loading extends State {
+        public static final class Loading extends State {
         }
 
         /**
          * User tried to search for something but nothing was found.
          */
-        public static class NoResults extends State {
+        public static final class NoResults extends State {
         }
 
         /**
          * User tried to search for something and something was found.
          */
-        public static class LoadedResults extends State {
+        public static final class LoadedResults extends State {
 
             @NonNull
             public final List<Item> items;
