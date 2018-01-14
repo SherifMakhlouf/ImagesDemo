@@ -1,4 +1,4 @@
-package com.example.images.data;
+package com.example.images.features.search.data;
 
 /**
  * Result which can either be successful or faulty.

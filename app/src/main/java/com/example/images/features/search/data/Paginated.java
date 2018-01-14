@@ -1,4 +1,4 @@
-package com.example.images.data;
+package com.example.images.features.search.data;
 
 /**
  * Data of one page out of possibly many.

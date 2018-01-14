@@ -1,8 +1,8 @@
-package com.example.images.ui;
+package com.example.images.features.search.ui;
 
-import com.example.images.data.ImagesRepository;
-import com.example.images.data.Result;
-import com.example.images.domain.ImageSearchInteractor;
+import com.example.images.features.search.data.ImagesRepository;
+import com.example.images.features.search.data.Result;
+import com.example.images.features.search.domain.ImageSearchInteractor;
 import com.example.pipe.Pipe;
 import com.example.pipe.Source;
 
@@ -15,10 +15,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static com.example.images.data.Result.error;
-import static com.example.images.data.Result.success;
-import static com.example.images.ui.ImageSearchView.Item;
-import static com.example.images.ui.ImageSearchView.State;
+import static com.example.images.features.search.data.Result.error;
+import static com.example.images.features.search.data.Result.success;
+import static com.example.images.features.search.ui.ImageSearchView.Item;
+import static com.example.images.features.search.ui.ImageSearchView.State;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;

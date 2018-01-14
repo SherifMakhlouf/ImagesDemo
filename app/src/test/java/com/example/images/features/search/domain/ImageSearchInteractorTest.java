@@ -1,9 +1,9 @@
-package com.example.images.domain;
+package com.example.images.features.search.domain;
 
 
-import com.example.images.data.ImagesRepository;
-import com.example.images.data.Paginated;
-import com.example.images.data.Result;
+import com.example.images.features.search.data.ImagesRepository;
+import com.example.images.features.search.data.Paginated;
+import com.example.images.features.search.data.Result;
 import com.example.pipe.Pipe;
 import com.example.pipe.Source;
 import com.example.pipe.Tester;
@@ -17,9 +17,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static com.example.images.data.ImagesRepository.Image;
-import static com.example.images.data.Result.error;
-import static com.example.images.data.Result.success;
+import static com.example.images.features.search.data.ImagesRepository.Image;
+import static com.example.images.features.search.data.Result.error;
+import static com.example.images.features.search.data.Result.success;
 import static com.example.pipe.Tester.test;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;

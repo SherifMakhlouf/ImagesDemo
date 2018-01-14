@@ -1,4 +1,4 @@
-package com.example.images.data;
+package com.example.images.features.search.data;
 
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;

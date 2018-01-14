@@ -1,10 +1,10 @@
-package com.example.images.domain;
+package com.example.images.features.search.domain;
 
 import android.support.annotation.NonNull;
 
-import com.example.images.data.ImagesRepository;
-import com.example.images.data.Paginated;
-import com.example.images.data.Result;
+import com.example.images.features.search.data.ImagesRepository;
+import com.example.images.features.search.data.Paginated;
+import com.example.images.features.search.data.Result;
 import com.example.pipe.Pipe;
 import com.example.pipe.Source;
 
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.example.images.data.ImagesRepository.Image;
+import static com.example.images.features.search.data.ImagesRepository.Image;
 import static java.util.Collections.emptyList;
 
 /**

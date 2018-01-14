@@ -1,4 +1,4 @@
-package com.example.images.ui;
+package com.example.images.features.search.ui;
 
 import android.support.annotation.NonNull;
 
