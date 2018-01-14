@@ -54,33 +54,45 @@ public class ImageSearchInteractor {
         currentQuery = query;
         loadingResults.push(true);
 
-        Pipe<Result<Paginated<List<Image>>>>.Subscription subscription = repository.queryImages(query, 1)
-                .subscribe(it -> {
-                    loadingResults.push(false);
+        activeSubscriptions.add(
+                repository.queryImages(query, 1)
+                        .subscribe(this::onQueryResult)
+        );
+    }
 
-                    if (it.isSuccess()) {
-                        synchronized (currentResult) {
-                            currentResult.clear();
-                            currentResult.addAll(it.value.value);
-                        }
+    private void onQueryResult(Result<Paginated<List<Image>>> result) {
+        loadingResults.push(false);
 
-                        searchResults.push(
-                                Result.success(it.value.value)
-                        );
+        if (result.isSuccess()) {
+            onQuerySuccess(result);
+        } else {
+            onQueryFailure(result);
+        }
+    }
 
-                        morePagesAvailable.push(
-                                it.value.currentPage < it.value.totalPages
-                        );
-                    } else {
-                        searchResults.push(
-                                Result.error(it.throwable)
-                        );
+    private void onQuerySuccess(Result<Paginated<List<Image>>> result) {
+        replaceCurrentResult(result);
 
-                        morePagesAvailable.push(false);
-                    }
-                });
+        searchResults.push(
+                Result.success(result.value.value)
+        );
 
-        activeSubscriptions.add(subscription);
+        updateMorePagesAvailability(result);
+    }
+
+    private void replaceCurrentResult(Result<Paginated<List<Image>>> result) {
+        synchronized (currentResult) {
+            currentResult.clear();
+            currentResult.addAll(result.value.value);
+        }
+    }
+
+    private void onQueryFailure(Result<Paginated<List<Image>>> result) {
+        searchResults.push(
+                Result.error(result.throwable)
+        );
+
+        morePagesAvailable.push(false);
     }
 
     /**
@@ -90,28 +102,42 @@ public class ImageSearchInteractor {
         verifyQueryIsNotEmpty();
 
         loadingNextPage.push(true);
-        Pipe<Result<Paginated<List<Image>>>>.Subscription subscription = repository.queryImages(currentQuery, currentPage.get() + 1)
-                .subscribe(it -> {
-                    loadingNextPage.push(false);
+        activeSubscriptions.add(
+                repository.queryImages(currentQuery, currentPage.get() + 1)
+                        .subscribe(this::onNextPageResult)
+        );
+    }
 
-                    if (it.isSuccess()) {
-                        currentPage.incrementAndGet();
+    private void onNextPageResult(Result<Paginated<List<Image>>> result) {
+        loadingNextPage.push(false);
 
-                        synchronized (currentResult) {
-                            currentResult.addAll(it.value.value);
+        if (result.isSuccess()) {
+            onNextPageSuccess(result);
+        }
+    }
 
-                            searchResults.push(Result.success(
-                                    new ArrayList<>(currentResult)
-                            ));
+    private void onNextPageSuccess(Result<Paginated<List<Image>>> result) {
+        currentPage.incrementAndGet();
 
-                            morePagesAvailable.push(
-                                    it.value.currentPage < it.value.totalPages
-                            );
-                        }
-                    }
-                });
+        synchronized (currentResult) {
+            currentResult.addAll(result.value.value);
 
-        activeSubscriptions.add(subscription);
+            searchResults.push(Result.success(
+                    new ArrayList<>(currentResult)
+            ));
+        }
+
+        updateMorePagesAvailability(result);
+    }
+
+    private void updateMorePagesAvailability(Result<Paginated<List<Image>>> result) {
+        morePagesAvailable.push(
+                canLoadMorePages(result)
+        );
+    }
+
+    private boolean canLoadMorePages(Result<Paginated<List<Image>>> result) {
+        return result.value.currentPage < result.value.totalPages;
     }
 
     private void stopActiveSubscriptions() {
