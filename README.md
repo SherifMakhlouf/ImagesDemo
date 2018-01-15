@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dmitry-zaitsev/ImagesDemo.svg?branch=master)](https://travis-ci.org/dmitry-zaitsev/ImagesDemo)
+
 # Loading images from Flickr
 
 This is a demo application which loads images from Flickr without using any 3rd party libraries at runtime (still using Mockito for tests).
