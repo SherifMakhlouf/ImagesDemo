@@ -11,19 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import com.example.images.features.search.data.repository.flickr.FlickrImagesRepository;
-import com.example.images.features.search.data.repository.flickr.ResponseDeserializer;
-import com.example.images.features.search.domain.ImageSearchInteractor;
+import com.example.images.di.DependencyResolver;
 import com.example.images.features.search.ui.ImageSearchPresenter;
 import com.example.images.features.search.ui.ImageSearchView;
 import com.example.images.features.search.ui.android.ImagesAdapter;
-import com.example.images.util.concurrent.ThrottlingExecutor;
-
-import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity implements ImageSearchView {
-
-    private static final long REQUEST_THROTTLE_MS = 200L;
 
     private ImageSearchPresenter presenter;
     private ImagesAdapter adapter;
@@ -47,17 +40,7 @@ public class MainActivity extends AppCompatActivity implements ImageSearchView {
         initQueryView();
         initRecyclerView();
 
-        presenter = new ImageSearchPresenter(
-                new ImageSearchInteractor(
-                        new FlickrImagesRepository(
-                                ThrottlingExecutor.fromExecutor(
-                                        Executors.newSingleThreadExecutor(),
-                                        REQUEST_THROTTLE_MS
-                                ),
-                                new ResponseDeserializer()
-                        )
-                )
-        );
+        presenter = new DependencyResolver().provideImageSearchPresenter();
     }
 
     private void initStateViews() {
