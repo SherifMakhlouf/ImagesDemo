@@ -29,6 +29,8 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
 
     public ImagesAdapter(LayoutInflater inflater) {
         this.inflater = inflater;
+
+        setHasStableIds(true);
     }
 
     @Override
@@ -65,6 +67,11 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         } else {
             throw new IllegalStateException("Unknown item type: " + item.getClass().getSimpleName());
         }
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return items.get(position).hashCode();
     }
 
     @Override
