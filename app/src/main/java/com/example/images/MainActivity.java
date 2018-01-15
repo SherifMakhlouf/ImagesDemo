@@ -16,6 +16,10 @@ import com.example.images.features.search.ui.ImageSearchPresenter;
 import com.example.images.features.search.ui.ImageSearchView;
 import com.example.images.features.search.ui.android.ImagesAdapter;
 
+import java.util.Collections;
+
+import static java.util.Collections.*;
+
 public class MainActivity extends AppCompatActivity implements ImageSearchView {
 
     private ImageSearchPresenter presenter;
@@ -130,6 +134,11 @@ public class MainActivity extends AppCompatActivity implements ImageSearchView {
                     loadedResults.items
             );
             canRequestMoreImages = loadedResults.morePagesAvailable;
+        } else {
+            adapter.setItems(
+                    emptyList()
+            );
+            canRequestMoreImages = false;
         }
     }
 

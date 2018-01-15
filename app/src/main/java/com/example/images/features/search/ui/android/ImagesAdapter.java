@@ -29,8 +29,6 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
 
     public ImagesAdapter(LayoutInflater inflater) {
         this.inflater = inflater;
-
-        setHasStableIds(true);
     }
 
     @Override
@@ -70,11 +68,6 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     }
 
     @Override
-    public long getItemId(int position) {
-        return items.get(position).hashCode();
-    }
-
-    @Override
     public int getItemCount() {
         return items.size();
     }
@@ -82,7 +75,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     /**
      * Updates items in the adapter.
      */
-    public void setItems(List<ImageSearchView.Item> items) {
+    public void setItems(@NonNull List<ImageSearchView.Item> items) {
         this.items = items;
         notifyDataSetChanged();
     }
