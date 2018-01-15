@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements ImageSearchView {
     private View noResults;
     private View defaultMessage;
 
+    private boolean canRequestMoreImages;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,10 +80,26 @@ public class MainActivity extends AppCompatActivity implements ImageSearchView {
 
     private void initRecyclerView() {
         adapter = new ImagesAdapter(LayoutInflater.from(this));
+
         recyclerView = findViewById(R.id.recyclerView);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (shouldLoadMoreImages(newState, layoutManager)) {
+                    listener.requestMoreResults();
+                }
+            }
+        });
+    }
+
+    private boolean shouldLoadMoreImages(int newState, GridLayoutManager layoutManager) {
+        return newState == RecyclerView.SCROLL_STATE_IDLE
+                && canRequestMoreImages
+                && layoutManager.findLastVisibleItemPosition() == adapter.getItemCount() - 1;
     }
 
     @Override
@@ -115,9 +133,12 @@ public class MainActivity extends AppCompatActivity implements ImageSearchView {
 
     private void updateAdapterItems(State state) {
         if (state instanceof State.LoadedResults) {
+            State.LoadedResults loadedResults = (State.LoadedResults) state;
+
             adapter.setItems(
-                    ((State.LoadedResults) state).items
+                    loadedResults.items
             );
+            canRequestMoreImages = loadedResults.morePagesAvailable;
         }
     }
 
