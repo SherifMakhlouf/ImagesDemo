@@ -1,16 +1,15 @@
-package com.example.images.features.search.data.repository;
+package com.example.images.features.search.data.repository.flickr;
 
 import android.support.annotation.NonNull;
 
 import com.example.images.features.search.data.Paginated;
 import com.example.images.features.search.data.Result;
+import com.example.images.features.search.data.repository.ImagesRepository;
 import com.example.images.util.IoUtils;
 import com.example.pipe.Pipe;
 import com.example.pipe.Source;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -20,12 +19,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 
 import static com.example.images.features.search.data.Result.error;
+import static com.example.images.features.search.data.Result.success;
 
 /**
  * Provides images using Flikr service.
@@ -36,9 +35,11 @@ public class FlickrImagesRepository implements ImagesRepository {
     private static final String URL = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=%s&format=json&nojsoncallback=1&safe_search=1&page=%d&text=%s;";
 
     private final Executor executor;
+    private final ResponseDeserializer responseDeserializer;
 
-    public FlickrImagesRepository(Executor executor) {
+    public FlickrImagesRepository(Executor executor, ResponseDeserializer responseDeserializer) {
         this.executor = executor;
+        this.responseDeserializer = responseDeserializer;
     }
 
     @Override
@@ -50,18 +51,11 @@ public class FlickrImagesRepository implements ImagesRepository {
             java.net.URL url = buildUrl(query, pageNumber);
 
             try {
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                try {
-                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                String result = performGetRequest(url);
 
-                    String result = IoUtils.readToString(in);
-
-                    resultSource.push(
-                            parseResult(result)
-                    );
-                } finally {
-                    urlConnection.disconnect();
-                }
+                resultSource.push(
+                        success(responseDeserializer.parseResult(result))
+                );
             } catch (IOException | JSONException e) {
                 resultSource.push(
                         error(e)
@@ -72,35 +66,15 @@ public class FlickrImagesRepository implements ImagesRepository {
         return Pipe.fromSource(resultSource);
     }
 
-    private Result<Paginated<List<Image>>> parseResult(String result) throws JSONException {
-        JSONObject root = new JSONObject(result);
-        JSONObject photos = root.getJSONObject("photos");
-        JSONArray photoList = photos.getJSONArray("photo");
+    private String performGetRequest(URL url) throws IOException {
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        try {
+            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 
-        ArrayList<Image> images = new ArrayList<>();
-
-        for (int i = 0; i < photoList.length(); i++) {
-            JSONObject photoDetails = photoList.getJSONObject(i);
-
-            images.add(
-                    new Image(
-                            String.format(
-                                    Locale.getDefault(),
-                                    "http://farm%d.static.flickr.com/%s/%s_%s.jpg",
-                                    photoDetails.getInt("farm"),
-                                    photoDetails.getString("server"),
-                                    photoDetails.getString("id"),
-                                    photoDetails.getString("secret")
-                            )
-                    )
-            );
+            return IoUtils.readToString(in);
+        } finally {
+            urlConnection.disconnect();
         }
-
-        return Result.success(new Paginated<>(
-                photos.getInt("page"),
-                photos.getInt("pages"),
-                images
-        ));
     }
 
     @NonNull

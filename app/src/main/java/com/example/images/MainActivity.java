@@ -11,7 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import com.example.images.features.search.data.repository.FlickrImagesRepository;
+import com.example.images.features.search.data.repository.flickr.FlickrImagesRepository;
+import com.example.images.features.search.data.repository.flickr.ResponseDeserializer;
 import com.example.images.features.search.domain.ImageSearchInteractor;
 import com.example.images.features.search.ui.ImageSearchPresenter;
 import com.example.images.features.search.ui.ImageSearchView;
@@ -52,7 +53,8 @@ public class MainActivity extends AppCompatActivity implements ImageSearchView {
                                 ThrottlingExecutor.fromExecutor(
                                         Executors.newSingleThreadExecutor(),
                                         REQUEST_THROTTLE_MS
-                                )
+                                ),
+                                new ResponseDeserializer()
                         )
                 )
         );
