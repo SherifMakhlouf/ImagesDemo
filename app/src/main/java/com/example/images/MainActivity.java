@@ -7,8 +7,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
 
 import com.example.images.features.search.data.repository.FlickrImagesRepository;
@@ -27,11 +27,17 @@ public class MainActivity extends AppCompatActivity implements ImageSearchView {
     @NonNull
     private Listener listener = Listener.NULL;
 
+    private RecyclerView recyclerView;
+    private View progressBar;
+    private View noResults;
+    private View defaultMessage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initStateViews();
         initQueryView();
         initRecyclerView();
 
@@ -42,6 +48,12 @@ public class MainActivity extends AppCompatActivity implements ImageSearchView {
                         )
                 )
         );
+    }
+
+    private void initStateViews() {
+        progressBar = findViewById(R.id.progressBar);
+        noResults = findViewById(R.id.noResults);
+        defaultMessage = findViewById(R.id.defaultMessage);
     }
 
     private void initQueryView() {
@@ -66,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements ImageSearchView {
 
     private void initRecyclerView() {
         adapter = new ImagesAdapter(LayoutInflater.from(this));
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
@@ -97,13 +109,40 @@ public class MainActivity extends AppCompatActivity implements ImageSearchView {
     }
 
     private void updateStateOnMainThread(State state) {
-        Log.d("^^^", state.toString());
+        updateVisibility(state);
+        updateAdapterItems(state);
+    }
 
+    private void updateAdapterItems(State state) {
         if (state instanceof State.LoadedResults) {
             adapter.setItems(
                     ((State.LoadedResults) state).items
             );
         }
+    }
+
+    private void updateVisibility(State state) {
+        recyclerView.setVisibility(
+                visibility(state instanceof State.LoadedResults)
+        );
+
+        progressBar.setVisibility(
+                visibility(state instanceof State.Loading)
+        );
+
+        defaultMessage.setVisibility(
+                visibility(state instanceof State.Default)
+        );
+
+        noResults.setVisibility(
+                visibility(state instanceof State.NoResults)
+        );
+    }
+
+    private static int visibility(boolean visible) {
+        return visible
+                ? View.VISIBLE
+                : View.GONE;
     }
 
 }

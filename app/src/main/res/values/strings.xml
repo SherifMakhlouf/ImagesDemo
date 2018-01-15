@@ -2,4 +2,6 @@
     <string name="app_name">Images</string>
     <string name="search_hint">Search for images…</string>
     <string name="loading">Loading…</string>
+    <string name="default_search_screen_message">Enter your search query</string>
+    <string name="nothing_was_found">Nothing was found</string>
 </resources>
