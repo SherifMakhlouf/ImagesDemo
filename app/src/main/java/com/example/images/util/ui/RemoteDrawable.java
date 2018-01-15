@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.LruCache;
+import android.widget.ImageView;
 
 import com.example.images.BuildConfig;
 
@@ -93,8 +94,37 @@ public class RemoteDrawable extends Drawable {
         MAIN_THREAD_HANDLER.post(() -> {
             BITMAP_CACHE.put(url, loadedBitmap);
             bitmap = loadedBitmap;
-            invalidateSelf();
+
+            refreshDrawable();
         });
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void refreshDrawable() {
+        if (BuildConfig.VERSION_CODE >= Build.VERSION_CODES.LOLLIPOP) {
+            invalidateSelf();
+        } else {
+            refreshDrawablePreLollipop();
+        }
+    }
+
+    private void refreshDrawablePreLollipop() {
+        // At the last moment I found out that on older devices invalidating the drawable does not
+        // cause size to be updated. So we have to forcefully reassign the drawable to the view.
+        // That is not a nice solution, but that works for the time being. Given more time I would
+        // instead not rely on Drawables and load images directly into the ImageView.
+
+        Callback callback = getCallback();
+
+        if (!(callback instanceof ImageView)) {
+            return;
+        }
+
+        ImageView imageView = (ImageView) callback;
+        if (imageView.getDrawable() == RemoteDrawable.this) {
+            imageView.setImageDrawable(null);
+            imageView.setImageDrawable(RemoteDrawable.this);
+        }
     }
 
     @Override
