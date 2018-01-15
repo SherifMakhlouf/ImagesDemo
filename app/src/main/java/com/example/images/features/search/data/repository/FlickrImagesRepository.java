@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
 import static com.example.images.features.search.data.Result.error;
 
@@ -33,9 +33,9 @@ public class FlickrImagesRepository implements ImagesRepository {
     private static final String API_KEY = "3e7cc266ae2b0e0d78e279ce8e361736";
     private static final String URL = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=%s&format=json&nojsoncallback=1&safe_search=1&page=%d&text=%s;";
 
-    private final ExecutorService executor;
+    private final Executor executor;
 
-    public FlickrImagesRepository(ExecutorService executor) {
+    public FlickrImagesRepository(Executor executor) {
         this.executor = executor;
     }
 

@@ -16,10 +16,13 @@ import com.example.images.features.search.domain.ImageSearchInteractor;
 import com.example.images.features.search.ui.ImageSearchPresenter;
 import com.example.images.features.search.ui.ImageSearchView;
 import com.example.images.features.search.ui.android.ImagesAdapter;
+import com.example.images.util.concurrent.ThrottlingExecutor;
 
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity implements ImageSearchView {
+
+    private static final long REQUEST_THROTTLE_MS = 200L;
 
     private ImageSearchPresenter presenter;
     private ImagesAdapter adapter;
@@ -46,7 +49,10 @@ public class MainActivity extends AppCompatActivity implements ImageSearchView {
         presenter = new ImageSearchPresenter(
                 new ImageSearchInteractor(
                         new FlickrImagesRepository(
-                                Executors.newSingleThreadExecutor()
+                                ThrottlingExecutor.fromExecutor(
+                                        Executors.newSingleThreadExecutor(),
+                                        REQUEST_THROTTLE_MS
+                                )
                         )
                 )
         );
